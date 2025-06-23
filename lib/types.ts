@@ -8,3 +8,18 @@ export interface ServiceType {
   startingPrice: number
   keywords: string[]
 }
+
+export interface ProfessionalType {
+  id: string
+  name: string
+  avatar: string
+  rating: number
+  reviewCount: number
+  price: number
+  serviceType: string
+  serviceSubtype: string
+  description: string
+  availability: string[]
+  location: string
+  distance: number
+}

@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { ShieldCheck } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const securityServices = [
 ]
 
 export default function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de segurança: ${securityServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = securityServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Segurança&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

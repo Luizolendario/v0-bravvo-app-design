@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Dog } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const petSitterServices = [
 ]
 
 export default function PetSitterModal({ isOpen, onClose }: PetSitterModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de pet sitter: ${petSitterServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = petSitterServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Pet Sitter&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

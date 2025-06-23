@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Leaf } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const gardeningServices = [
 ]
 
 export default function GardeningModal({ isOpen, onClose }: GardeningModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de jardinagem: ${gardeningServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = gardeningServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Jardinagem&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

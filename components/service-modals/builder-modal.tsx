@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Hammer } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const builderServices = [
 ]
 
 export default function BuilderModal({ isOpen, onClose }: BuilderModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de pedreiro: ${builderServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = builderServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Pedreiro&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

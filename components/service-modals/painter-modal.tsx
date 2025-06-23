@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Paintbrush } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const painterServices = [
 ]
 
 export default function PainterModal({ isOpen, onClose }: PainterModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de pintor: ${painterServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = painterServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Pintor&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

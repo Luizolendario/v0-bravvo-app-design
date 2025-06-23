@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Laptop } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const itSupportServices = [
 ]
 
 export default function ITSupportModal({ isOpen, onClose }: ITSupportModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de informática: ${itSupportServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = itSupportServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Informática&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

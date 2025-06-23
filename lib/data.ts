@@ -14,6 +14,119 @@ import {
 } from "lucide-react"
 import type { ServiceType } from "./types"
 
+// Dados base dos serviços (sem tradução)
+export const baseServices = [
+  {
+    id: 1,
+    nameKey: "electrician" as const,
+    descriptionKey: "electricianDesc" as const,
+    icon: Wrench,
+    startingPrice: 80,
+    keywords: ["elétrica", "tomada", "fiação", "curto-circuito", "instalação"],
+  },
+  {
+    id: 2,
+    nameKey: "plumber" as const,
+    descriptionKey: "plumberDesc" as const,
+    icon: Droplet,
+    startingPrice: 90,
+    keywords: ["vazamento", "cano", "água", "torneira", "hidráulica"],
+  },
+  {
+    id: 3,
+    nameKey: "cleaner" as const,
+    descriptionKey: "cleanerDesc" as const,
+    icon: Brush,
+    startingPrice: 120,
+    keywords: ["limpeza", "faxina", "casa", "apartamento", "escritório"],
+  },
+  {
+    id: 4,
+    nameKey: "moving" as const,
+    descriptionKey: "movingDesc" as const,
+    icon: Truck,
+    startingPrice: 100,
+    keywords: ["mudança", "transporte", "carreto", "entrega", "móveis"],
+  },
+  {
+    id: 5,
+    nameKey: "hairdresser" as const,
+    descriptionKey: "hairdresserDesc" as const,
+    icon: Scissors,
+    startingPrice: 60,
+    keywords: ["cabelo", "corte", "penteado", "coloração", "barba"],
+  },
+  {
+    id: 6,
+    nameKey: "builder" as const,
+    descriptionKey: "builderDesc" as const,
+    icon: Hammer,
+    startingPrice: 150,
+    keywords: ["obra", "reforma", "construção", "alvenaria", "parede"],
+  },
+  {
+    id: 7,
+    nameKey: "itSupport" as const,
+    descriptionKey: "itSupportDesc" as const,
+    icon: Laptop,
+    startingPrice: 70,
+    keywords: ["computador", "notebook", "formatação", "vírus", "software"],
+  },
+  {
+    id: 8,
+    nameKey: "petSitter" as const,
+    descriptionKey: "petSitterDesc" as const,
+    icon: Dog,
+    startingPrice: 50,
+    keywords: ["cachorro", "gato", "passeio", "banho", "tosa"],
+  },
+  {
+    id: 9,
+    nameKey: "gardening" as const,
+    descriptionKey: "gardeningDesc" as const,
+    icon: Leaf,
+    startingPrice: 100,
+    keywords: ["jardim", "plantas", "grama", "poda", "paisagismo"],
+  },
+  {
+    id: 10,
+    nameKey: "security" as const,
+    descriptionKey: "securityDesc" as const,
+    icon: ShieldCheck,
+    startingPrice: 200,
+    keywords: ["alarme", "câmera", "monitoramento", "cerca", "proteção"],
+  },
+  {
+    id: 11,
+    nameKey: "photographer" as const,
+    descriptionKey: "photographerDesc" as const,
+    icon: Camera,
+    startingPrice: 250,
+    keywords: ["foto", "evento", "ensaio", "casamento", "aniversário"],
+  },
+  {
+    id: 12,
+    nameKey: "painter" as const,
+    descriptionKey: "painterDesc" as const,
+    icon: Paintbrush,
+    startingPrice: 120,
+    keywords: ["pintura", "parede", "teto", "textura", "reforma"],
+  },
+]
+
+// Função para obter serviços traduzidos
+export function getTranslatedServices(t: any): ServiceType[] {
+  return baseServices.map((service) => ({
+    id: service.id,
+    name: t[service.nameKey],
+    description: t[service.descriptionKey],
+    icon: service.icon,
+    startingPrice: service.startingPrice,
+    keywords: service.keywords,
+  }))
+}
+
+// Para compatibilidade com código existente
 export const services: ServiceType[] = [
   {
     id: 1,

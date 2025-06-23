@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Camera } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,14 @@ const photographerServices = [
 ]
 
 export default function PhotographerModal({ isOpen, onClose }: PhotographerModalProps) {
+  const router = useRouter()
+
   const handleServiceSelect = (serviceId: string) => {
-    alert(`Você selecionou o serviço de fotógrafo: ${photographerServices.find((s) => s.id === serviceId)?.name}`)
-    onClose()
+    const selectedService = photographerServices.find((s) => s.id === serviceId)
+    if (selectedService) {
+      onClose()
+      router.push(`/profissionais?tipo=Fotógrafo&subtipo=${selectedService.name}`)
+    }
   }
 
   return (

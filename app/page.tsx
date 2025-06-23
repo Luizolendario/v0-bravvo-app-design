@@ -2,11 +2,12 @@
 
 import { Settings } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import ServiceCard from "@/components/service-card"
-import AddressBar from "@/components/address-bar"
+import AddressSelector from "@/components/address-selector"
 import SearchBar from "@/components/search-bar"
-import { services } from "@/lib/data"
+import { getTranslatedServices } from "@/lib/data"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PlumberServiceModal from "@/components/service-modals/plumber-service-modal"
 import ElectricianModal from "@/components/service-modals/electrician-modal"
@@ -20,29 +21,51 @@ import GardeningModal from "@/components/service-modals/gardening-modal"
 import SecurityModal from "@/components/service-modals/security-modal"
 import PhotographerModal from "@/components/service-modals/photographer-modal"
 import PainterModal from "@/components/service-modals/painter-modal"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function Home() {
+  const router = useRouter()
+  const { t } = useLanguage()
+
+  // Obter serviços traduzidos
+  const translatedServices = getTranslatedServices(t)
+
+  useEffect(() => {
+    // Aplicar tema escuro se estiver salvo
+    const savedDarkMode = localStorage.getItem("bravvoDarkMode")
+    if (savedDarkMode === "true") {
+      document.documentElement.classList.add("dark")
+    }
+  }, [])
+
+  const handleSettingsClick = () => {
+    router.push("/configuracoes")
+  }
+
   return (
-    <main className="flex min-h-screen flex-col bg-white">
+    <main className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white border-b">
+      <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
-                Bravvo
+                {t.appName}
               </h1>
             </Link>
 
             <div className="flex items-center gap-4">
-              <button className="p-2 rounded-full hover:bg-purple-100 transition-colors">
-                <Settings className="h-5 w-5 text-purple-700" />
+              <button
+                className="p-2 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors"
+                onClick={handleSettingsClick}
+              >
+                <Settings className="h-5 w-5 text-purple-700 dark:text-purple-400" />
               </button>
             </div>
           </div>
 
-          {/* Address Bar */}
-          <AddressBar />
+          {/* Address Selector */}
+          <AddressSelector />
 
           {/* Search Bar */}
           <SearchBar />
@@ -51,11 +74,11 @@ export default function Home() {
 
       {/* Main Content */}
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-lg font-medium mb-4">Serviços Disponíveis</h2>
+        <h2 className="text-lg font-medium mb-4 dark:text-white">{t.availableServices}</h2>
 
         <div className="overflow-x-auto pb-4">
           <div className="flex gap-3 min-w-max">
-            {services.map((service) => (
+            {translatedServices.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))}
           </div>
@@ -64,10 +87,10 @@ export default function Home() {
 
       {/* Popular Services Section */}
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-lg font-medium mb-4">Serviços Populares</h2>
+        <h2 className="text-lg font-medium mb-4 dark:text-white">{t.popularServices}</h2>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {services.slice(0, 4).map((service) => (
+          {translatedServices.slice(0, 4).map((service) => (
             <PopularServiceCard key={`popular-${service.id}`} service={service} />
           ))}
         </div>
@@ -75,67 +98,67 @@ export default function Home() {
 
       {/* How It Works Section */}
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-lg font-medium mb-4">Como Funciona</h2>
+        <h2 className="text-lg font-medium mb-4 dark:text-white">{t.howItWorks}</h2>
 
         <Tabs defaultValue="process" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="process" className="text-xs">
-              Como Funciona
+          <TabsList className="grid w-full grid-cols-3 mb-4 dark:bg-gray-800">
+            <TabsTrigger value="process" className="text-xs dark:text-white dark:data-[state=active]:bg-gray-700">
+              {t.howItWorks}
             </TabsTrigger>
-            <TabsTrigger value="clients" className="text-xs">
-              Para Clientes
+            <TabsTrigger value="clients" className="text-xs dark:text-white dark:data-[state=active]:bg-gray-700">
+              {t.forClients}
             </TabsTrigger>
-            <TabsTrigger value="professionals" className="text-xs">
-              Para Profissionais
+            <TabsTrigger value="professionals" className="text-xs dark:text-white dark:data-[state=active]:bg-gray-700">
+              {t.forProfessionals}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="process" className="bg-white rounded-lg border p-4 shadow-sm">
+          <TabsContent
+            value="process"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 shadow-sm"
+          >
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-700 font-medium text-sm">1</span>
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                  <span className="text-purple-700 dark:text-purple-300 font-medium text-sm">1</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Escolha o serviço</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Navegue pelos diversos serviços disponíveis e escolha o que você precisa.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.chooseService}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.chooseServiceDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-700 font-medium text-sm">2</span>
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                  <span className="text-purple-700 dark:text-purple-300 font-medium text-sm">2</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Selecione um profissional</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Compare avaliações, preços e disponibilidade dos profissionais qualificados.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.selectProfessional}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.selectProfessionalDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-700 font-medium text-sm">3</span>
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                  <span className="text-purple-700 dark:text-purple-300 font-medium text-sm">3</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Agende e pague</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Escolha a data e horário, e realize o pagamento de forma segura pelo aplicativo.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.scheduleAndPay}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.scheduleAndPayDesc}</p>
                 </div>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="clients" className="bg-white rounded-lg border p-4 shadow-sm">
+          <TabsContent
+            value="clients"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 shadow-sm"
+          >
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -145,17 +168,15 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Profissionais verificados</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Todos os profissionais passam por verificação de antecedentes e qualificações.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.verifiedProfessionals}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.verifiedProfessionalsDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -165,17 +186,15 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Garantia de satisfação</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Se o serviço não atender às suas expectativas, oferecemos suporte para resolução.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.satisfactionGuarantee}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.satisfactionGuaranteeDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -185,21 +204,22 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Pagamento seguro</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Realize pagamentos com segurança e só libere após a conclusão do serviço.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.securePayment}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.securePaymentDesc}</p>
                 </div>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="professionals" className="bg-white rounded-lg border p-4 shadow-sm">
+          <TabsContent
+            value="professionals"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 shadow-sm"
+          >
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -209,17 +229,15 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Cadastre-se gratuitamente</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Crie seu perfil profissional e comece a receber solicitações de serviços.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.registerFree}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.registerFreeDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -234,17 +252,15 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Gerencie sua agenda</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Defina sua disponibilidade e organize seus compromissos em um só lugar.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.manageSchedule}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.manageScheduleDesc}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="bg-purple-100 rounded-full p-2 flex-shrink-0">
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-full p-2 flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-purple-700"
+                    className="w-4 h-4 text-purple-700 dark:text-purple-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -259,10 +275,8 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium">Receba pagamentos</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Receba seus pagamentos de forma rápida e segura diretamente na sua conta.
-                  </p>
+                  <h3 className="text-sm font-medium dark:text-white">{t.receivePayments}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.receivePaymentsDesc}</p>
                 </div>
               </div>
             </div>
@@ -270,61 +284,34 @@ export default function Home() {
         </Tabs>
       </section>
 
-      {/* Promotions */}
-      <section className="container mx-auto px-4 py-6 mb-16">
+      {/* New Promotion */}
+      <section className="container mx-auto px-4 py-6 mb-6">
         <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl p-6 text-white">
-          <h2 className="text-xl font-bold mb-2">Primeira vez no Bravvo?</h2>
-          <p className="text-sm mb-4">Ganhe 20% OFF no seu primeiro serviço!</p>
-          <button className="bg-white text-purple-700 px-4 py-2 rounded-full text-sm font-medium">Aproveitar</button>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-white/20 rounded-full p-2">
+              <span className="text-2xl">🎉</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Novo no Bravvo?</h2>
+              <p className="text-sm opacity-90">Oferta especial para novos usuários</p>
+            </div>
+          </div>
+          <p className="text-sm mb-4">
+            Ganhe <span className="font-bold text-yellow-300">10% OFF</span> no seu primeiro serviço! Válido apenas uma
+            vez por usuário.
+          </p>
+          <button className="bg-white text-purple-700 px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">
+            Resgatar Desconto
+          </button>
         </div>
       </section>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-6">
-        <div className="flex justify-between items-center">
-          <button className="flex flex-col items-center">
-            <svg className="w-6 h-6 text-purple-700" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-            </svg>
-            <span className="text-xs mt-1">Início</span>
-          </button>
-
-          <button className="flex flex-col items-center">
-            <svg className="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="text-xs mt-1">Buscar</span>
-          </button>
-
-          <button className="flex flex-col items-center">
-            <svg className="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-            </svg>
-            <span className="text-xs mt-1">Pedidos</span>
-          </button>
-
-          <button className="flex flex-col items-center">
-            <svg className="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="text-xs mt-1">Perfil</span>
-          </button>
-        </div>
-      </nav>
     </main>
   )
 }
 
 // Componente para os cards de serviços populares
-function PopularServiceCard({ service }: { service: (typeof services)[0] }) {
+function PopularServiceCard({ service }: { service: any }) {
+  const { t } = useLanguage()
   const [isElectricianModalOpen, setIsElectricianModalOpen] = useState(false)
   const [isPlumberModalOpen, setIsPlumberModalOpen] = useState(false)
   const [isCleaningModalOpen, setIsCleaningModalOpen] = useState(false)
@@ -339,52 +326,53 @@ function PopularServiceCard({ service }: { service: (typeof services)[0] }) {
   const [isPainterModalOpen, setIsPainterModalOpen] = useState(false)
 
   const handleClick = () => {
+    // Usar o nome traduzido para comparação
     switch (service.name) {
-      case "Eletricista":
+      case t.electrician:
         setIsElectricianModalOpen(true)
         break
-      case "Encanador":
+      case t.plumber:
         setIsPlumberModalOpen(true)
         break
-      case "Diarista":
+      case t.cleaner:
         setIsCleaningModalOpen(true)
         break
-      case "Fretes":
+      case t.moving:
         setIsMovingModalOpen(true)
         break
-      case "Cabeleireiro":
+      case t.hairdresser:
         setIsHairdresserModalOpen(true)
         break
-      case "Pedreiro":
+      case t.builder:
         setIsBuilderModalOpen(true)
         break
-      case "Informática":
+      case t.itSupport:
         setIsITSupportModalOpen(true)
         break
-      case "Pet Sitter":
+      case t.petSitter:
         setIsPetSitterModalOpen(true)
         break
-      case "Jardinagem":
+      case t.gardening:
         setIsGardeningModalOpen(true)
         break
-      case "Segurança":
+      case t.security:
         setIsSecurityModalOpen(true)
         break
-      case "Fotógrafo":
+      case t.photographer:
         setIsPhotographerModalOpen(true)
         break
-      case "Pintor":
+      case t.painter:
         setIsPainterModalOpen(true)
         break
       default:
-        alert(`Você selecionou o serviço: ${service.name}`)
+        alert(`${t.youSelected}: ${service.name}`)
     }
   }
 
   return (
     <>
       <div
-        className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 cursor-pointer"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer hover:shadow-lg transition-shadow"
         onClick={handleClick}
       >
         <div className="h-32 relative overflow-hidden">
@@ -399,46 +387,48 @@ function PopularServiceCard({ service }: { service: (typeof services)[0] }) {
           </div>
         </div>
         <div className="p-4">
-          <p className="text-xs text-gray-500">A partir de R$ {service.startingPrice}</p>
-          <button className="mt-2 text-xs text-purple-600 font-medium">Ver detalhes</button>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {t.startingFrom} {service.startingPrice}
+          </p>
+          <button className="mt-2 text-xs text-purple-600 dark:text-purple-400 font-medium">{t.seeDetails}</button>
         </div>
       </div>
 
       {/* Service Modals */}
-      {service.name === "Eletricista" && (
+      {service.name === t.electrician && (
         <ElectricianModal isOpen={isElectricianModalOpen} onClose={() => setIsElectricianModalOpen(false)} />
       )}
-      {service.name === "Encanador" && (
+      {service.name === t.plumber && (
         <PlumberServiceModal isOpen={isPlumberModalOpen} onClose={() => setIsPlumberModalOpen(false)} />
       )}
-      {service.name === "Diarista" && (
+      {service.name === t.cleaner && (
         <CleaningModal isOpen={isCleaningModalOpen} onClose={() => setIsCleaningModalOpen(false)} />
       )}
-      {service.name === "Fretes" && (
+      {service.name === t.moving && (
         <MovingModal isOpen={isMovingModalOpen} onClose={() => setIsMovingModalOpen(false)} />
       )}
-      {service.name === "Cabeleireiro" && (
+      {service.name === t.hairdresser && (
         <HairdresserModal isOpen={isHairdresserModalOpen} onClose={() => setIsHairdresserModalOpen(false)} />
       )}
-      {service.name === "Pedreiro" && (
+      {service.name === t.builder && (
         <BuilderModal isOpen={isBuilderModalOpen} onClose={() => setIsBuilderModalOpen(false)} />
       )}
-      {service.name === "Informática" && (
+      {service.name === t.itSupport && (
         <ITSupportModal isOpen={isITSupportModalOpen} onClose={() => setIsITSupportModalOpen(false)} />
       )}
-      {service.name === "Pet Sitter" && (
+      {service.name === t.petSitter && (
         <PetSitterModal isOpen={isPetSitterModalOpen} onClose={() => setIsPetSitterModalOpen(false)} />
       )}
-      {service.name === "Jardinagem" && (
+      {service.name === t.gardening && (
         <GardeningModal isOpen={isGardeningModalOpen} onClose={() => setIsGardeningModalOpen(false)} />
       )}
-      {service.name === "Segurança" && (
+      {service.name === t.security && (
         <SecurityModal isOpen={isSecurityModalOpen} onClose={() => setIsSecurityModalOpen(false)} />
       )}
-      {service.name === "Fotógrafo" && (
+      {service.name === t.photographer && (
         <PhotographerModal isOpen={isPhotographerModalOpen} onClose={() => setIsPhotographerModalOpen(false)} />
       )}
-      {service.name === "Pintor" && (
+      {service.name === t.painter && (
         <PainterModal isOpen={isPainterModalOpen} onClose={() => setIsPainterModalOpen(false)} />
       )}
     </>
